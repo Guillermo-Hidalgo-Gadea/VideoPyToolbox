@@ -25,7 +25,7 @@ def ffplay():
     videofile = filedialog.askopenfilenames(title='Choose the Video Files you want to play')
     video = videofile[0]
 
-    ffmpeg_command = f"ffplay '{video}'"
+    ffmpeg_command = f"ffplay {video}"
     print(ffmpeg_command)
     os.system(ffmpeg_command)
 
