@@ -17,6 +17,18 @@ import cv2
 from tkinter import filedialog
 # conda install ffmpeg
 
+def ffplay():
+    '''
+    Video player with ffplay instead of OpenCV
+    '''
+    # Choose Video File from Dialog Box
+    videofile = filedialog.askopenfilenames(title='Choose the Video Files you want to play')
+    video = videofile[0]
+
+    ffmpeg_command = f"ffplay '{video}'"
+    print(ffmpeg_command)
+    os.system(ffmpeg_command)
+
 
 def play_video():
     '''
@@ -143,6 +155,12 @@ while True:
         
     elif choice.startswith("t"):
         print("\nStart trimming videos in ffmpeg... \n")
+        # reset while loop
+        choice = ''
+
+    elif choice.startswith("x"):
+        print("\nTesting ffplay... \n")
+        ffplay()
         # reset while loop
         choice = ''
         
