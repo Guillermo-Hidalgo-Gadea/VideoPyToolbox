@@ -1,7 +1,7 @@
 """
 ====================================================================================================
-This VideoPyToolbox uses OpenCV and ffmpeg to edit video files from the terminal.
-The functions play_video(), compress_h265(crf), concat_videos() and trim_and_split() are used
+This VideoPyToolbox uses ffmpeg to play and edit video files from the terminal.
+The functions ffplay(), compress_h265(crf), concat_videos() and trim_and_split() are used
 to play a video recording, compress it using h265 codec, or to concatenate and trim clips from 
 timestamps.
 
@@ -11,11 +11,12 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
 """
 
-# libraries 
+# 'conda install ffmpeg' if not already installed
+
+# import libraries 
 import os
-import cv2
 from tkinter import filedialog
-# conda install ffmpeg
+
 
 def ffplay():
     '''
@@ -32,8 +33,9 @@ def ffplay():
 
 def play_video():
     '''
-    Video player with openCV
+    Video player with openCV: DEPRECATED
     '''
+    import cv2
     # Choose Video File from Dialog Box
     videofile = filedialog.askopenfilenames(title='Choose the Video Files you want to play')
 
@@ -142,8 +144,8 @@ while True:
         choice = ''
 
     elif choice.startswith("p"):
-        print("\nStart playing video in OpenCV... \n")
-        play_video()
+        print("\nStart playing video in ffplay... \n")
+        ffplay()
         # reset while loop
         choice = ''
         
@@ -155,12 +157,6 @@ while True:
         
     elif choice.startswith("t"):
         print("\nStart trimming videos in ffmpeg... \n")
-        # reset while loop
-        choice = ''
-
-    elif choice.startswith("x"):
-        print("\nTesting ffplay... \n")
-        ffplay()
         # reset while loop
         choice = ''
         
