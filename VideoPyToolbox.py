@@ -14,18 +14,16 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 '''
 ## TODO: 
 - separate functions in modules
-- concatenate function
-- get timestamps
+- get timestamps to trim from player
 - trim and split function
 
 
 Pipeline:
 1) compress all videos to a common codec (h.265/h.264) to save space
-2) concatenate videos to complete sessions (by filename?)
+2) concatenate videos to complete sessions
 3) manually set timestamps for start/end as well as trial length
 4) loop over csv file and trim/split all files
 5) new folder with individual trials
-
 '''
 
 
@@ -33,8 +31,10 @@ Pipeline:
 
 # import libraries 
 import os
-from tkinter import filedialog # interactive interface to selet files 
-from natsort import natsorted, ns # natural sorting of strings with numbers
+import numpy as np
+from tkinter import filedialog      # interactive interface to selet files 
+from natsort import natsorted, ns   # natural sorting of strings with numbers
+from datetime import datetime       # get timestamp for filenames 
 
 
 def ffplay():
@@ -46,7 +46,7 @@ def ffplay():
     video = videofile[0]
 
     ffmpeg_command = f"ffplay {video}"
-    print(ffmpeg_command)
+    #print(ffmpeg_command)
     os.system(ffmpeg_command)
 
 
@@ -60,8 +60,8 @@ def compress_h265(crf):
         output = filename + '_h265.mp4'
         
         # crf from 0 to 51, 18 recommended lossless average
-        ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx265 -crf {crf} {output}"
-        print(ffmpeg_command)
+        ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx265 -crf {crf} {output}" #libx265 not in macos
+        #print(ffmpeg_command)
         os.system(ffmpeg_command)
 	# color settings: ffmpeg -i input -vf format=gray output
 
@@ -70,49 +70,80 @@ def concat_videos():
     '''
     Video concatenation: This function reads video filenames from a list and concatenates conserving the codec. 
     '''
+    next = 'y'
 
-    # select videos to append and write to txt
-    concatlist= filedialog.askopenfilenames(title='Choose Video Files you want to concatenate')
+    while True:
 
-    # maintain natural order of strings with numbers
-    filenames = list(natsorted(concatlist, alg=ns.IGNORECASE))
+        if next == 'y':
+            # select videos to append
+            concatlist= filedialog.askopenfilenames(title='Choose Video Files you want to concatenate')
 
-    # give common output filename
-    output = input(f"Choose output filename for {filenames[0]}...\n Output filename:")
-    output = [output + '.mp4'] * len(filenames)
-	
-    # create concatination dataset
-    concats = np.column_stack((filenames, output))
-	
-    # repeat for other sessions...
-    # append concats array ...
-	
-    # start the actual concatenation
-    # set output directory
-    # find unique output names in concats
-    
-    for outputfile in np.unique(concats[:,1]):
-	# get all filenames that correspond to output
-	filenames = concats[concats[:,1]==outputfile][:,0]
-	with open("mylist.txt", "w+") as textfile:
-            for element in filenames:
-                textfile.write("file " +"'"+ element + "'\n")
-            textfile.close()
-    	# concatenate file
-        ffmpeg_command = f"ffmpeg -f concat -safe 0 -i mylist.txt -c copy {output}"
-        #print(ffmpeg_command)
-        os.system(ffmpeg_command)
-# if finished print metadata.txt with output duration and size
+            # maintain natural order of strings with numbers
+            filenames = list(natsorted(concatlist, alg=ns.IGNORECASE))
 
-    
-    
-    
+            # give common output filename
+            _, name1 = os.path.split(filenames[0])
+            _, name2 = os.path.split(filenames[-1])
+            output = input(f"Output filename for {name1} to {name2}: ")
+            output = [output + '.mp4'] * len(filenames)
+            
+            # append or create concatination dataset
+            try:
+                concats = np.vstack((concats, np.column_stack((filenames, output))))
+            except:
+                concats = np.column_stack((filenames, output))
+            
+            # repeat for other sessions...
+            next = input(f"Concatenate more sessions [y/n]: ")
+
+        if next =='n':
+            # start the actual concatenation
+            
+            timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+
+            # find unique output names in concats
+            for outputfile in np.unique(concats[:,1]):
+    	        # get all filenames that correspond to output
+                filenames = concats[concats[:,1]==outputfile][:,0]
+
+                # set output directory
+                output = os.path.join(os.path.dirname(filenames[0]) , "concatenated", outputfile)
+                path, _ = os.path.split(output)
+                try:
+                    os.mkdir(path)
+                except:
+                    pass
+
+                # set ffmpeg parameters
+                mylist = os.path.join(path, "mylist.txt")
+                with open(mylist, "w+") as textfile:
+                    for element in filenames:
+                        textfile.write("file " +"'"+ element + "'\n")
+                    textfile.close()
+
+                # concatenate file
+                ffmpeg_command = f"ffmpeg -f concat -safe 0 -i {mylist} -c copy {output}"
+                    #print(ffmpeg_command)
+                os.system(ffmpeg_command)
+                os.remove(mylist)
+            
+            # if finished print metadata.txt with output duration and size
+            metadata = os.path.join(path, f"Concatenation_{timestamp}_VideoPyToolbox.txt")
+            np.savetxt(metadata, concats, fmt = "%s")
+
+            #break while loop
+            break
 
 
 def trim_and_split():
     '''
     Video trim: This function reads video filenames and timestamps from a list and trims clips. 
     '''
+    # select all files to trim and split
+    # create template csv
+    # open and edit csv timestamps
+    # check csv format
+    # loop over cases and split 
     pass
     
 
@@ -150,7 +181,6 @@ while True:
         break
         
     else:
-        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         print("########################################################")
         print("           Welcome to the the VideoPyToolbox            ")
         print("MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com")
