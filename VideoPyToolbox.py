@@ -11,11 +11,30 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
 """
 
+'''
+## TODO: 
+- separate functions in modules
+- concatenate function
+- get timestamps
+- trim and split function
+
+
+Pipeline:
+1) compress all videos to a common codec (h.265/h.264) to save space
+2) concatenate videos to complete sessions (by filename?)
+3) manually set timestamps for start/end as well as trial length
+4) loop over csv file and trim/split all files
+5) new folder with individual trials
+
+'''
+
+
 # 'conda install ffmpeg' if not already installed
 
 # import libraries 
 import os
-from tkinter import filedialog
+from tkinter import filedialog # interactive interface to selet files 
+from natsort import natsorted, ns # natural sorting of strings with numbers
 
 
 def ffplay():
@@ -29,61 +48,6 @@ def ffplay():
     ffmpeg_command = f"ffplay {video}"
     print(ffmpeg_command)
     os.system(ffmpeg_command)
-
-
-def play_video():
-    '''
-    Video player with openCV: DEPRECATED
-    '''
-    import cv2
-    # Choose Video File from Dialog Box
-    videofile = filedialog.askopenfilenames(title='Choose the Video Files you want to play')
-
-    # Create a VideoCapture object and read from input file 
-    cap = cv2.VideoCapture(videofile[0]) 
-
-    # Calculate Video Properties
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    duration = total/fps
-
-    print("Video Frame Rate: %d FPS" %fps)
-    print("Frames contained: %d" %total)
-    print("Video duration: %d sec" %duration)
-
-
-    # Check if camera opened successfully 
-    if (cap.isOpened()== False): 
-        print("Error opening video file") 
-
-    # Read until video is completed 
-    while(cap.isOpened()):
-        # Capture frame-by-frame
-        ret, frame = cap.read()
-            
-        if ret == True:
-            # resize frame
-            h, w, c = frame.shape
-            frame = cv2.resize(frame, (int(w/1.5), int(h/1.5))) 
-            
-            # Display the resulting frame
-            cv2.imshow('Frame', frame)
-        
-               
-            # Press Q on keyboard to exit
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
-
-        # Break the loop
-        else:
-            break
-
-    # When everything done, release 
-    cap.release() 
-
-
-    # Closes all the frames 
-    cv2.destroyAllWindows() 
 
 
 def compress_h265(crf):
@@ -106,21 +70,43 @@ def concat_videos():
     '''
     Video concatenation: This function reads video filenames from a list and concatenates conserving the codec. 
     '''
+
     # select videos to append and write to txt
     concatlist= filedialog.askopenfilenames(title='Choose Video Files you want to concatenate')
-    ## ??? video ORDER?
-    with open("mylist.txt", "w+") as textfile:
-        for element in concatlist:
-            textfile.write("file " +"'"+ element + "'\n")
-        textfile.close()
 
-    # name output file
-    output = input(f"Output filename for {concatlist[0]}: ")
-    output = output + '.mp4'
+    # maintain natural order of strings with numbers
+    filenames = list(natsorted(concatlist, alg=ns.IGNORECASE))
+
+    # give common output filename
+    output = input(f"Choose output filename for {filenames[0]}...\n Output filename:")
+    output = [output + '.mp4'] * len(filenames)
+	
+    # create concatination dataset
+    concats = np.column_stack((filenames, output))
+	
+    # repeat for other sessions...
+    # append concats array ...
+	
+    # start the actual concatenation
+    # set output directory
+    # find unique output names in concats
     
-    ffmpeg_command = f"ffmpeg -f concat -safe 0 -i mylist.txt -c copy {output}"
-    print(ffmpeg_command)
-    os.system(ffmpeg_command)
+    for outputfile in np.unique(concats[:,1]):
+	# get all filenames that correspond to output
+	filenames = concats[concats[:,1]==outputfile][:,0]
+	with open("mylist.txt", "w+") as textfile:
+            for element in filenames:
+                textfile.write("file " +"'"+ element + "'\n")
+            textfile.close()
+    	# concatenate file
+        ffmpeg_command = f"ffmpeg -f concat -safe 0 -i mylist.txt -c copy {output}"
+        #print(ffmpeg_command)
+        os.system(ffmpeg_command)
+# if finished print metadata.txt with output duration and size
+
+    
+    
+    
 
 
 def trim_and_split():
