@@ -82,11 +82,11 @@ def concat_videos():
             filenames = list(natsorted(concatlist, alg=ns.IGNORECASE))
 
             # give common output filename
-            _, name1 = os.path.split(filenames[0])
+            videopath, name1 = os.path.split(filenames[0])
             _, name2 = os.path.split(filenames[-1])
             output = input(f"Output filename for {name1} to {name2}: ")
             output = [output + '.mp4'] * len(filenames)
-            
+
             # append or create concatination dataset
             try:
                 concats = np.vstack((concats, np.column_stack((filenames, output))))
@@ -94,11 +94,10 @@ def concat_videos():
                 concats = np.column_stack((filenames, output))
             
             # repeat for other sessions...
-            next = input(f"Concatenate more sessions [y/n]: ")
+            next = input(f"Concatenate more sessions [y/N]: ")
 
         if next =='n':
             # start the actual concatenation
-            
             timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
 
             # find unique output names in concats
@@ -107,28 +106,30 @@ def concat_videos():
                 filenames = concats[concats[:,1]==outputfile][:,0]
 
                 # set output directory
-                output = os.path.join(os.path.dirname(filenames[0]) , "concatenated", outputfile)
-                path, _ = os.path.split(output)
+                output = os.path.join(videopath , "concatenated", outputfile)
+
                 try:
-                    os.mkdir(path)
+                    os.mkdir(os.path.dirname(output))
                 except:
                     pass
 
                 # set ffmpeg parameters
-                mylist = os.path.join(path, "mylist.txt")
-                with open(mylist, "w+") as textfile:
+                myfile = videopath + "/mylist.txt"
+                with open(myfile, "w+") as textfile:
                     for element in filenames:
-                        textfile.write("file " +"'"+ element + "'\n")
+                        #relative_path = os.path.relpath(element, output)
+                        _, name = os.path.split(element)
+                        textfile.write("file " +"'"+ name + "'\n")
                     textfile.close()
 
                 # concatenate file
-                ffmpeg_command = f"ffmpeg -f concat -safe 0 -i {mylist} -c copy {output}"
+                ffmpeg_command = f"ffmpeg -f concat -safe 0 -i {myfile} -c copy {output}"
                     #print(ffmpeg_command)
                 os.system(ffmpeg_command)
-                os.remove(mylist)
+                #os.remove(myfile)
             
             # if finished print metadata.txt with output duration and size
-            metadata = os.path.join(path, f"Concatenation_{timestamp}_VideoPyToolbox.txt")
+            metadata = os.path.join(os.path.dirname(output), f"Concat_{timestamp}.txt")
             np.savetxt(metadata, concats, fmt = "%s")
 
             #break while loop
