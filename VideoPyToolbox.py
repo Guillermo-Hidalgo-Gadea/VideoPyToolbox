@@ -126,7 +126,7 @@ def concat_videos():
                 ffmpeg_command = f"ffmpeg -f concat -safe 0 -i {myfile} -c copy {output}"
                     #print(ffmpeg_command)
                 os.system(ffmpeg_command)
-                #os.remove(myfile)
+                os.remove(myfile)
             
             # if finished print metadata.txt with output duration and size
             metadata = os.path.join(os.path.dirname(output), f"Concat_{timestamp}.txt")
