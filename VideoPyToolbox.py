@@ -15,7 +15,6 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ## TODO: 
 - separate functions in modules
 - get timestamps to trim from player
-- trim and split function
 
 
 Pipeline:
@@ -23,19 +22,28 @@ Pipeline:
 2) concatenate videos to complete sessions
 3) manually set timestamps for start/end as well as trial length
 4) loop over csv file and trim/split all files
-5) new folder with individual trials
+5) new split folder with individual trials
 '''
 
 
 # 'conda install ffmpeg' if not already installed
 
 # import libraries 
-import os
-import numpy as np
+import os                           # paths and terminal commands
+import sys, subprocess              # terminal commands in macos
+import numpy as np                  # use arrays in concat
+import pandas as pd                 # data frames in split
 from tkinter import filedialog      # interactive interface to selet files 
 from natsort import natsorted, ns   # natural sorting of strings with numbers
 from datetime import datetime       # get timestamp for filenames 
 
+
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
 
 def ffplay():
     '''
@@ -50,19 +58,45 @@ def ffplay():
     os.system(ffmpeg_command)
 
 
-def compress_h265(crf):
+def compress_h265():
     '''
     Video Compression with H265: This function reads video filenames from a list and compresses with H264 codec. Audio is removed. 
     '''
     videofile = filedialog.askopenfilenames(title='Choose Video Files you want to compress')
-    for video in videofile:
-        filename = video[:-4]
-        output = filename + '_h265.mp4'
-        
-        # crf from 0 to 51, 18 recommended lossless average
-        ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx265 -crf {crf} {output}" #libx265 not in macos
-        #print(ffmpeg_command)
-        os.system(ffmpeg_command)
+    
+    # crf from 0 to 51, 18 recommended lossless average
+    crf = input("Choose constant rate factor between 0-50: ") or 18
+
+    path = os.path.dirname(videofile[0]) + '/compressed/'
+    
+    # set output directory
+    try:
+        os.mkdir(path)
+    except:
+        pass
+
+    # compress videos with chosen encoder 
+    encoder = input("Choose encoder for compression [x264/x265]: ")
+    if '5' in encoder:
+        for video in videofile:
+            filename = video[:-4]
+            output = path + os.path.basename(filename) + '_h265.mp4'
+            
+            # save metadata
+
+            ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx265 -crf {crf} {output}" #libx265 not in macos
+            #print(ffmpeg_command)
+            os.system(ffmpeg_command)
+    else:
+        for video in videofile:
+            filename = video[:-4]
+            output = path + os.path.basename(filename) + '_h264.mp4'
+            
+            # save metadata
+
+            ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx264 -crf {crf} {output}" #libx265 not in macos
+            #print(ffmpeg_command)
+            os.system(ffmpeg_command)
 	# color settings: ffmpeg -i input -vf format=gray output
 
          
@@ -136,16 +170,66 @@ def concat_videos():
             break
 
 
-def trim_and_split():
+def trim_split():
     '''
     Video trim: This function reads video filenames and timestamps from a list and trims clips. 
     '''
-    # select all files to trim and split
+    # select videos to split
+    splitlist= filedialog.askopenfilenames(title='Choose Video Files you want to split')
+    path = os.path.dirname(splitlist[0])
+    splitlist = [os.path.basename(filename) for filename in splitlist]
+
+    # placeholders
+    output = ['trim_' + filename for filename in splitlist]
+    start = ['00:00:00.000'] * len(splitlist)
+    end = ['00:00:00.000'] * len(splitlist)
+    
+    timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+    filename = path + '/split/' + timestamp + '_' + 'splitlist.txt' # add timestamp
+    # set output directory
+    try:
+        os.mkdir(os.path.dirname(filename))
+    except:
+        pass
+
     # create template csv
+    splitlist = pd.DataFrame({'input': splitlist, 'output': output, 'start':start, 'end':end}, index=None)
+    
+    splitlist.to_csv(filename, sep ='\t', index=False)
+
+    # add instructions
+    instruction = '# This is a list of videos to split with VideoPyToolbox.\n# Please edit the parameters below and save the file.\n#To split one input into several outputs copy/paste the respective line.\n'
+    with open(filename, "r+") as textfile:
+        original = textfile.read()
+        textfile.seek(0)
+        textfile.write(instruction + original)
+        textfile.close()
+    
     # open and edit csv timestamps
+    open_file(filename)
+
+    input("Continue splitting?")
+
     # check csv format
-    # loop over cases and split 
-    pass
+    splitlist = pd.read_csv(filename, sep ='\t', comment='#')
+    print(filename)
+    print(splitlist)
+    check = input('Is the format correct? [y/N] ')
+
+    # loop over cases and get split command
+    for case in range(len(splitlist)):
+        row = splitlist[case:case+1]
+        row = row.to_string(header=False, index=False).split()
+        original = path + '/' + row[0]
+        output = os.path.dirname(filename) + '/' + row[1]
+        start = row[2]
+        end = row[3]
+
+        ffmpeg_command = f"ffmpeg -ss {start} -i {original} -to {end} -c copy {output}"
+
+        # split in loop
+        os.system(ffmpeg_command)
+
     
 
 ## Entry point
@@ -156,8 +240,7 @@ while True:
     if choice.startswith("c"):
         # start compression
         print("\nStart video compression in ffmpeg with H265 codec... \n")
-        crf = input("Choose constant rate factor between 0-50: ")
-        compress_h265(crf)
+        compress_h265()
         # reset while loop
         choice = ''
 
@@ -175,6 +258,7 @@ while True:
         
     elif choice.startswith("t"):
         print("\nStart trimming videos in ffmpeg... \n")
+        trim_split()
         # reset while loop
         choice = ''
         
