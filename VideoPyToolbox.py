@@ -31,12 +31,14 @@ Pipeline:
 # import libraries 
 import os                           # paths and terminal commands
 import sys, subprocess              # terminal commands in macos
+import textwrap                     # clean terminal print
 import numpy as np                  # use arrays in concat
 import pandas as pd                 # data frames in split
 from tkinter import filedialog      # interactive interface to selet files 
 from natsort import natsorted, ns   # natural sorting of strings with numbers
 from datetime import datetime       # get timestamp for filenames 
-
+#import ffpb                        # wrap ffmpeg in ffpb to show progress bar
+#pip install ffpb                   
 
 def open_file(filename):
     if sys.platform == "win32":
@@ -44,6 +46,16 @@ def open_file(filename):
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filename])
+
+def clear():
+      
+    # for windows
+    if os.name == 'nt':
+        _ = os.system('cls')
+  
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = os.system('clear')
 
 def ffplay():
     '''
@@ -53,9 +65,10 @@ def ffplay():
     videofile = filedialog.askopenfilenames(title='Choose the Video Files you want to play')
     video = videofile[0]
 
-    ffmpeg_command = f"ffplay {video}"
-    #print(ffmpeg_command)
-    os.system(ffmpeg_command)
+    ffplay_timecode = "\"drawtext=fontfile=Arial.ttf: text='%{pts\:hms} Frame\: %{frame_num}': x=(w-tw)/1.1: y=h-(2*lh): fontcolor=black: fontsize=50: box=1: boxcolor=white: boxborderw=5\""
+    ffplay_command = f"ffplay -x 1000 -vf {ffplay_timecode} {video}"
+
+    os.system(ffplay_command)
 
 
 def compress_h265():
@@ -77,27 +90,33 @@ def compress_h265():
 
     # compress videos with chosen encoder 
     encoder = input("Choose encoder for compression [x264/x265]: ")
+
+    # save metadata
+    timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+    metadata = path + '/' + 'compression_' + timestamp  + '.txt'
+
     if '5' in encoder:
         for video in videofile:
             filename = video[:-4]
             output = path + os.path.basename(filename) + '_h265.mp4'
             
             # save metadata
+            timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+            metadata = path + '/' + 'compression_' + timestamp  + '.txt'
 
-            ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx265 -crf {crf} {output}" #libx265 not in macos
-            #print(ffmpeg_command)
+            ffmpeg_command = f"ffmpeg -progress {metadata} -i {video} -an -vcodec libx265 -crf {crf} {output}" 
             os.system(ffmpeg_command)
     else:
         for video in videofile:
             filename = video[:-4]
             output = path + os.path.basename(filename) + '_h264.mp4'
-            
-            # save metadata
 
-            ffmpeg_command = f"ffmpeg -i {video} -an -vcodec libx264 -crf {crf} {output}" #libx265 not in macos
-            #print(ffmpeg_command)
+            # save metadata
+            timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+            metadata = path + '/' + 'compression_' + timestamp  + '.txt'
+
+            ffmpeg_command = f"ffmpeg -progress {metadata} -i {video} -an -vcodec libx264 -crf {crf} {output}" #libx265 not in macos
             os.system(ffmpeg_command)
-	# color settings: ffmpeg -i input -vf format=gray output
 
          
 def concat_videos():
@@ -151,14 +170,16 @@ def concat_videos():
                 myfile = videopath + "/mylist.txt"
                 with open(myfile, "w+") as textfile:
                     for element in filenames:
-                        #relative_path = os.path.relpath(element, output)
                         _, name = os.path.split(element)
                         textfile.write("file " +"'"+ name + "'\n")
                     textfile.close()
 
+                # save metadata
+                timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+                metadata = os.path.dirname(output) + '/' + 'concat_' + timestamp  + '.txt'
+
                 # concatenate file
-                ffmpeg_command = f"ffmpeg -f concat -safe 0 -i {myfile} -c copy {output}"
-                    #print(ffmpeg_command)
+                ffmpeg_command = f"ffmpeg -progress {metadata} -f concat -safe 0 -i {myfile} -c copy {output}"
                 os.system(ffmpeg_command)
                 os.remove(myfile)
             
@@ -185,7 +206,7 @@ def trim_split():
     end = ['00:00:00.000'] * len(splitlist)
     
     timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
-    filename = path + '/split/' + timestamp + '_' + 'splitlist.txt' # add timestamp
+    filename = path + '/split/' + timestamp + '_' + 'splitlist.txt' 
     # set output directory
     try:
         os.mkdir(os.path.dirname(filename))
@@ -214,8 +235,10 @@ def trim_split():
     splitlist = pd.read_csv(filename, sep ='\t', comment='#')
     print(filename)
     print(splitlist)
-    check = input('Is the format correct? [y/N] ')
-
+    check = input('Is the format correct? [y/n] ')
+    #if check.startswith("n"):
+    #    open_file(filename)
+    #else:
     # loop over cases and get split command
     for case in range(len(splitlist)):
         row = splitlist[case:case+1]
@@ -225,12 +248,18 @@ def trim_split():
         start = row[2]
         end = row[3]
 
-        ffmpeg_command = f"ffmpeg -ss {start} -i {original} -to {end} -c copy {output}"
+        # save metadata
+        timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+        metadata = os.path.dirname(filename) + '/' + 'split_' + timestamp  + '.txt'
+
+        #ffmpeg_command = f"ffmpeg -ss {start} -i {original} -to {end} -c copy {output} > {metadata} 2>&1" #If you want both to go to file > result.txt 2>&1
+        #ffmpeg_command = f"ffpb -ss {start} -i {original} -to {end} -c copy {output} 2> {metadata}"  #if you use 2> than STDERR goes to file
+        #ffmpeg_command = f"ffpb -ss {start} -i {original} -to {end} -c copy {output} > {metadata}" # If you use > than STDOUT goes to file.  
+        ffmpeg_command = f"ffmpeg -progress {metadata} -ss {start} -i {original} -to {end} -c copy {output}"
 
         # split in loop
         os.system(ffmpeg_command)
 
-    
 
 ## Entry point
 choice = ''
@@ -256,23 +285,27 @@ while True:
         # reset while loop
         choice = ''
         
-    elif choice.startswith("t"):
+    elif choice.startswith("s"):
         print("\nStart trimming videos in ffmpeg... \n")
         trim_split()
         # reset while loop
         choice = ''
         
     elif choice.startswith("q"):
+        clear()
         break
         
     else:
-        print("########################################################")
-        print("           Welcome to the the VideoPyToolbox            ")
-        print("MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com")
-        print("########################################################")
-        print("\n\nYou can Play, Compress, Append and Trim videos, right from the terminal")
-        print("[choose between 'p','c','a','t' and 'q' to play, compress, append, trim and quit]")
-
-        choice = input("\n\nHow can I help you? (P/C/A/T/Q): ")
+        clear()
+        terminalwidth = os.get_terminal_size().columns
+        print("#"*terminalwidth)
+        print("Welcome to the VideoPy Toolbox".center(terminalwidth))
+        print("MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com".center(terminalwidth))
+        print("#"*terminalwidth)
+        print("\n\n")
+        instructions = "VideoPy is a FFMPEG wrapper to play videos, to compress and change codecs, as well as to append and split raw videos. You can choose between 'p' for play, 'c' for compress, 'a' for append, 's' for split, or 'q' to quit."
+        wrapper = textwrap.TextWrapper(width = terminalwidth)
+        print(wrapper.fill(text=instructions))
+        choice = input("\n\nHow can I help you? [P/C/A/S/Q]: ")
 
     
