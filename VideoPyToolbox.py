@@ -75,12 +75,14 @@ def compress_h265():
     '''
     Video Compression with H265: This function reads video filenames from a list and compresses with H264 codec. Audio is removed. 
     '''
+    # select batch to compress multiple
     videofile = filedialog.askopenfilenames(title='Choose Video Files you want to compress')
     
     # crf from 0 to 51, 18 recommended lossless average
     crf = input("Choose constant rate factor between 0-50: ") or 18
 
-    path = os.path.dirname(videofile[0]) + '/compressed/'
+    outputdir = filedialog.askdirectory(title='Choose Output Directory for Compression')
+    path = outputdir + '/compressed/'
     
     # set output directory
     try:
@@ -90,10 +92,6 @@ def compress_h265():
 
     # compress videos with chosen encoder 
     encoder = input("Choose encoder for compression [x264/x265]: ")
-
-    # save metadata
-    timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
-    metadata = path + '/' + 'compression_' + timestamp  + '.txt'
 
     if '5' in encoder:
         for video in videofile:
@@ -135,7 +133,7 @@ def concat_videos():
             filenames = list(natsorted(concatlist, alg=ns.IGNORECASE))
 
             # give common output filename
-            videopath, name1 = os.path.split(filenames[0])
+            _, name1 = os.path.split(filenames[0])
             _, name2 = os.path.split(filenames[-1])
             output = input(f"Output filename for {name1} to {name2}: ")
             output = [output + '.mp4'] * len(filenames)
@@ -150,8 +148,8 @@ def concat_videos():
             next = input(f"Concatenate more sessions [y/N]: ")
 
         if next =='n':
-            # start the actual concatenation
-            timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
+            # ask output directory
+            outputdir =filedialog.askdirectory(title='Choose Output Directory for Concatenation')
 
             # find unique output names in concats
             for outputfile in np.unique(concats[:,1]):
@@ -159,15 +157,17 @@ def concat_videos():
                 filenames = concats[concats[:,1]==outputfile][:,0]
 
                 # set output directory
-                output = os.path.join(videopath , "concatenated", outputfile)
+                #output = os.path.join(videopath , "concatenated", outputfile)
+                output = os.path.join(outputdir , "concatenated", outputfile)
 
                 try:
                     os.mkdir(os.path.dirname(output))
                 except:
                     pass
 
-                # set ffmpeg parameters
-                myfile = videopath + "/mylist.txt"
+                # write mylist.txt for ffmpeg
+                path, _ = os.path.split(filenames[0])
+                myfile = path + "/mylist.txt"
                 with open(myfile, "w+") as textfile:
                     for element in filenames:
                         _, name = os.path.split(element)
@@ -176,10 +176,11 @@ def concat_videos():
 
                 # save metadata
                 timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
-                metadata = os.path.dirname(output) + '/' + 'concat_' + timestamp  + '.txt'
+                #metadata = os.path.dirname(output) + '/' + 'metadata_' + timestamp  + '.txt'
+                progress = os.path.dirname(output) + '/' + 'progress_' + timestamp  + '.txt'
 
                 # concatenate file
-                ffmpeg_command = f"ffmpeg -progress {metadata} -f concat -safe 0 -i {myfile} -c copy {output}"
+                ffmpeg_command = f"ffmpeg -progress {progress} -f concat -safe 0 -i {myfile} -c copy {output}"
                 os.system(ffmpeg_command)
                 os.remove(myfile)
             
