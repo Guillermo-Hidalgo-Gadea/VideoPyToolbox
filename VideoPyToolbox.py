@@ -256,7 +256,9 @@ def trim_split():
         #ffmpeg_command = f"ffmpeg -ss {start} -i {original} -to {end} -c copy {output} > {metadata} 2>&1" #If you want both to go to file > result.txt 2>&1
         #ffmpeg_command = f"ffpb -ss {start} -i {original} -to {end} -c copy {output} 2> {metadata}"  #if you use 2> than STDERR goes to file
         #ffmpeg_command = f"ffpb -ss {start} -i {original} -to {end} -c copy {output} > {metadata}" # If you use > than STDOUT goes to file.  
-        ffmpeg_command = f"ffmpeg -progress {metadata} -ss {start} -i {original} -to {end} -c copy {output}"
+        ffmpeg_command = f"ffmpeg -progress {metadata} -i {original} -ss {start} -to {end} -c copy {output}"
+        """
+        ATTENTION, -to and -t confounded? splits of different sices... """
 
         # split in loop
         os.system(ffmpeg_command)
