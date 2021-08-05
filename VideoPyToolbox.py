@@ -16,7 +16,7 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 # import libraries 
 import os                           # paths and terminal commands
 import time                         # sleep to slow terminal outputs
-import sys, subprocess              # terminal commands in macos
+import sys                          # terminal commands in macos
 import textwrap                     # clean terminal print
 
 # import functions
@@ -29,29 +29,17 @@ from toolbox.function_split import trim_split
 from toolbox.logo import ascii_logo, width, height
 
 # Helper functions
-def open_file(filename):
-    if sys.platform == "win32":
-        os.startfile(filename)
-    else:
-        opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, filename])
-    return
-
-def clear():
-    # for windows
-    if os.name == 'nt':
-        _ = os.system('cls')
-  
-    # for mac and linux(here, os.name is 'posix')
-    else:
-        _ = os.system('clear')
-    return
-
 def reset_terminal(w, h):
-    clear()
-    cmd = f"mode {w},{h}"
-    os.system(cmd)
-    
+    if os.name == 'nt': # for windows
+        _ = os.system('cls')
+        cmd = f"mode {w},{h}"
+        os.system(cmd)  
+    else:# for mac and linux(here, os.name is 'posix')
+        _ = os.system('clear')
+        cmd = f"mode {w},{h}"
+        os.system(cmd)    
+
+# Terminal colors
 RESET = "\033[0;0m"
 MATRIX = "\033[0;32m"
 
@@ -120,7 +108,7 @@ if __name__ == '__main__':
             
         else:
             print("\nSorry, couldn't understand the command... \n")
-            time.sleep(3)
+            time.sleep(1.5)
             # reset while loop
             choice = 'main'
             

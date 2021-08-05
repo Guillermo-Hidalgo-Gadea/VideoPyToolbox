@@ -10,9 +10,17 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 
 import os                           # paths and terminal commands
 import pandas as pd                 # data frames in split
+import sys, subprocess              # terminal commands in macos
 from tkinter import filedialog      # interactive interface to selet files 
 from datetime import datetime       # get timestamp for filenames 
 
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
+    return
 
 def trim_split():
     '''
