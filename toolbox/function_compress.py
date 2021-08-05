@@ -18,8 +18,9 @@ def compress_h265():
     Video Compression with H265: This function reads video filenames from a list and compresses with H264 codec. Audio is removed. 
     '''
     # select batch to compress multiple
+
     videofile = filedialog.askopenfilenames(title='Choose Video Files you want to compress')
-    
+
     # crf from 0 to 51, 18 recommended lossless average
     crf = input("Choose constant rate factor between 0-50: ") or 18
 

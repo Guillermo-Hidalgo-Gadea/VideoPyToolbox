@@ -26,4 +26,4 @@ $$  \ /$$/$$ /$$$$$$$ /$$$$$$  /$$$$$$  $$    $$/$$ |  $$ |         $$ /$$$$$$  
 
 # get logo width
 width = max([len(line) for line in ascii_logo.splitlines()])
-height = len(ascii_logo.splitlines()) *3
+height = len(ascii_logo.splitlines()) * 3

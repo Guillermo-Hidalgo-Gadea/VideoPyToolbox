@@ -13,6 +13,9 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
 """
 
+# Todo: 
+# 1) debug cancel and function breaks
+
 # import libraries 
 import os                           # paths and terminal commands
 import time                         # sleep to slow terminal outputs
@@ -60,21 +63,33 @@ if __name__ == '__main__':
             sys.stdout.write(MATRIX)
             print(ascii_logo.center(width))
             sys.stdout.write(RESET)
-            instructions = "VideoPy is a FFMPEG wrapper to play videos, to compress and change codecs, as well as to append and split raw videos. You can choose between 'p' for play, 'c' for compress, 'a' for append, 's' for split, or 'q' to quit."
+            instructions = "VideoPy is a FFMPEG wrapper to play videos, to compress and change codecs, as well as to append and split raw videos."
             wrapper = textwrap.TextWrapper(width = width)
             print(wrapper.fill(text=instructions))
-            choice = input("\n\nHow can I help you? [P/C/A/S/Q]: ")
+            # function help format
+            help = '''
+        'p'     Play audio or video file
+        'c'     Compress video to h.265/h.264
+        'a'     Append or Concatenate multiple files
+        's'     Split or Trim files by timestamp 
+        'r'     Rename files in batches
+        'u'     Custom pipeline to compress and concatenate
+        'q'     Quit
+            '''
+            print(help)
 
-        elif choice.startswith("c"):
-            # start compression
-            print("\nStart compression with ffmpeg... \n")
-            compress_h265()
-            # reset while loop
-            choice = 'main'
+            choice = input("\nHow can I help you: ")
 
         elif choice.startswith("p"):
             print("\nStart playing video in ffplay... \n")
             ffplay()
+            # reset while loop
+            choice = 'main'
+            
+        elif choice.startswith("c"):
+            # start compression
+            print("\nStart compression with ffmpeg... \n")
+            compress_h265()
             # reset while loop
             choice = 'main'
             
@@ -103,7 +118,6 @@ if __name__ == '__main__':
             choice = 'main'
             
         elif choice.startswith("q"):
-            clear()
             break
             
         else:
