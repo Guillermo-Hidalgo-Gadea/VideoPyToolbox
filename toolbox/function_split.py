@@ -90,7 +90,7 @@ def trim_split():
 
         # then overwrite the output trimmed at given timestamps
         #ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -c copy {output} > {metadata} 2>&1" #If you want to save both to go to file > result.txt 2>&1  
-        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -c:v ffv1 {output}"
+        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -an -vcodec ffv1 {output}"
         os.system(ffmpeg_command)
 
         """
@@ -104,6 +104,7 @@ def trim_split():
         1) use -ss after input to be more accurate
         2) add keyframes at given timestamp...
         3) use recode instead of copy to re-create frames around cut edges, lossless codec ffv1?
+        Could not find tag for codec ffv1 in stream...
 
         """
 
