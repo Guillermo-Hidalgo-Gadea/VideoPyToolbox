@@ -83,12 +83,27 @@ def trim_split():
         timestamp = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
         metadata = os.path.dirname(filename) + '/' + 'split_' + timestamp  + '.txt'
 
-        #ffmpeg_command = f"ffmpeg -ss {start} -i {original} -to {end} -c copy {output} > {metadata} 2>&1" #If you want both to go to file > result.txt 2>&1
-        #ffmpeg_command = f"ffpb -ss {start} -i {original} -to {end} -c copy {output} 2> {metadata}"  #if you use 2> than STDERR goes to file
-        #ffmpeg_command = f"ffpb -ss {start} -i {original} -to {end} -c copy {output} > {metadata}" # If you use > than STDOUT goes to file.  
-        ffmpeg_command = f"ffmpeg -progress {metadata} -i {original} -ss {start} -to {end} -c copy {output}"
-        """
-        ATTENTION, -to and -t confounded? splits of different sices... """
-
-        # split in loop
+        # first inster key_frames at timepoint for accurate seeking
+        ffmpeg_command = f"ffmpeg -i {original} -force_key_frames {start},{end} -c copy {output}"
         os.system(ffmpeg_command)
+
+        # then overwrite the output trimmed at given timestamps
+        #ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -c copy {output} > {metadata} 2>&1" #If you want to save both to go to file > result.txt 2>&1  
+        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -c copy {output}"
+        os.system(ffmpeg_command)
+
+        """
+        ATTENTION, -to and -t confounded? splits of different sices...
+        -ss works differently before and after -i, after is more frame-accurate 
+        Maybe error with Keyframes at given timestamp? 
+        Since the seeking operation jumps between I-frames, it is not going to accurately stop on the frame (or time) that you requested. It will search for the nearest I-frame and start the copy operation from that point.
+        trim: ffmpeg -i INPUT -vf trim=60:120
+        -y to Overwrite output files without asking
+
+        1) use -ss after input to be more accurate
+        2) add keyframes at given timestamp...
+        3) use recode instead of copy to re-create frames around cut edges?
+
+        """
+
+        
