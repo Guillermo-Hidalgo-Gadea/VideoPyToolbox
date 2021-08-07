@@ -90,35 +90,35 @@ if __name__ == '__main__':
             # start compression
             print("\nStart compression with ffmpeg... \n")
             compress_h265()
-            input("Done compressing!")
+            input("\nDone compressing!\n")
             # reset while loop
             choice = 'main'
             
         elif choice.startswith("a"):
             print("\nStart appending videos with ffmpeg... \n")
             concat_videos()
-            input("Done appending!")
+            input("\nDone appending!\n")
             # reset while loop
             choice = 'main'
             
         elif choice.startswith("s"):
             print("\nStart trimming videos in ffmpeg... \n")
             trim_split()
-            input("Done trimming!")
+            input("\nDone trimming!\n")
             # reset while loop
             choice = 'main'
 
         elif choice.startswith("u"):
             print("\nAh, the usual. Comming right up... \n")
             the_usual()
-            input("Done with your pipeline!")
+            input("\nDone with your pipeline!\n")
             # reset while loop
             choice = 'main'
 
         elif choice.startswith("r"):
             print("\nStart renaming files... \n")
             batch_rename()
-            input("Done renaming!")
+            input("\nDone renaming!\n")
             # reset while loop
             choice = 'main'
             

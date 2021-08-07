@@ -94,17 +94,19 @@ def trim_split():
         os.system(ffmpeg_command)
 
         """
-        ATTENTION, -to and -t confounded? splits of different sices...
-        -ss works differently before and after -i, after is more frame-accurate 
-        Maybe error with Keyframes at given timestamp? 
-        Since the seeking operation jumps between I-frames, it is not going to accurately stop on the frame (or time) that you requested. It will search for the nearest I-frame and start the copy operation from that point.
-        trim: ffmpeg -i INPUT -vf trim=60:120
+        ATTENTION,
+        -ss works differently before and after -i, after is more frame-accurate, before is faster
+        Missmatch in split due to seek errors with Keyframes at given timestamp: Since the seeking operation jumps between I-frames, it is not going to accurately 
+        stop on the frame (or time) that you requested. It will search for the nearest I-frame and start the copy operation from that point.
+        
+        use
         -y to Overwrite output files without asking
 
         1) use -ss after input to be more accurate - NOT WORKING
         2) add keyframes at given timestamp - NOT WORKING
-        3) use recode instead of copy to re-create frames around cut edges, lossless codec ffv1? - NOT WORKING
-        4) try recode with ibx264 -crf 0 
+        3) use recode instead of copy to re-create frames around cut edges, lossless codec ffv1? - NOT WORKING, WHY?
+        4) try recode with ibx264 -crf 0 as lossless - WORKING!
+        5) trim: ffmpeg -i INPUT -vf trim=60:120
         """
 
         
