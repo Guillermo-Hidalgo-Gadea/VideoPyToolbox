@@ -85,12 +85,12 @@ def trim_split():
         metadata = os.path.dirname(filename) + '/' + 'split_' + timestamp  + '.txt'
 
         # first inster key_frames at timepoint for accurate seeking
-        ffmpeg_command = f"ffmpeg -i {original} -force_key_frames {start},{end} -c copy {forced}"
-        os.system(ffmpeg_command)
+        #ffmpeg_command = f"ffmpeg -i {original} -force_key_frames {start},{end} -c copy {forced}"
+        #os.system(ffmpeg_command)
 
         # then overwrite the output trimmed at given timestamps
         #ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -c copy {output} > {metadata} 2>&1" #If you want to save both to go to file > result.txt 2>&1  
-        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {forced} -ss {start} -to {end} -c copy {output}"
+        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -c:v ffv1 {output}"
         os.system(ffmpeg_command)
 
         """
@@ -103,7 +103,7 @@ def trim_split():
 
         1) use -ss after input to be more accurate
         2) add keyframes at given timestamp...
-        3) use recode instead of copy to re-create frames around cut edges?
+        3) use recode instead of copy to re-create frames around cut edges, lossless codec ffv1?
 
         """
 
