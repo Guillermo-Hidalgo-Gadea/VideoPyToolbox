@@ -1,5 +1,6 @@
 # VideoPyToolbox
 Play, compress, trim and concatenate videos in python using FFmpeg
+![Logo](https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox/logo.ico)
 
 ## What is VideoPyToolbox?
 This Toolbox is a python wrapper of a bunch of useful ffmpeg commands to play, compress and edit videos using ffmpeg.
