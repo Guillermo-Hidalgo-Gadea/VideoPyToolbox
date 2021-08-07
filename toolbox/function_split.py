@@ -75,6 +75,7 @@ def trim_split():
         row = splitlist[case:case+1]
         row = row.to_string(header=False, index=False).split()
         original = path + '/' + row[0]
+        forced = path + '/forces_' + row[0]
         output = os.path.dirname(filename) + '/' + row[1]
         start = row[2]
         end = row[3]
@@ -84,16 +85,14 @@ def trim_split():
         metadata = os.path.dirname(filename) + '/' + 'split_' + timestamp  + '.txt'
 
         # first inster key_frames at timepoint for accurate seeking
-        #ffmpeg_command = f"ffmpeg -i {original} -force_key_frames {start},{end} -c copy {output}"
-        #os.system(ffmpeg_command)
+        ffmpeg_command = f"ffmpeg -i {original} -force_key_frames {start},{end} -c copy {forced}"
+        os.system(ffmpeg_command)
 
         # then overwrite the output trimmed at given timestamps
         #ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -c copy {output} > {metadata} 2>&1" #If you want to save both to go to file > result.txt 2>&1  
-        #ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {output} -ss {start} -to {end} -c copy {output}"
-        #os.system(ffmpeg_command)
-
-        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -force_key_frames {start},{end} -ss {start} -to {end} -c copy {output}"
+        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {forced} -ss {start} -to {end} -c copy {output}"
         os.system(ffmpeg_command)
+
         """
         ATTENTION, -to and -t confounded? splits of different sices...
         -ss works differently before and after -i, after is more frame-accurate 
