@@ -89,7 +89,7 @@ def trim_split():
 
         # then overwrite the output trimmed at given timestamps
         #ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -c copy {output} > {metadata} 2>&1" #If you want to save both to go to file > result.txt 2>&1  
-        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -c copy {output}"
+        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {output} -ss {start} -to {end} -c copy {output}"
         os.system(ffmpeg_command)
 
         """
