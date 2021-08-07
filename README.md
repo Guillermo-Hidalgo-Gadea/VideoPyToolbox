@@ -4,7 +4,7 @@ Play, compress, trim and concatenate videos in python using FFmpeg
 
 
 ## What it is
-This Toolbox is a python wrapper of a bunch of useful ffmpeg commands to play, compress and edit videos using ffmpeg.
+This Toolbox is a python wrapper for a bunch of useful ffmpeg commands to play, compress and edit videos using ffmpeg.
 Many video recordings in computer vision are not optimized for conventional media players due to large uncompressed sizes or incompatible video codecs (see [here](https://gitlab.ruhr-uni-bochum.de/ikn/syncflir) for such a video recording tool). FFplay can easily open video files with several codecs and play them frame by frame.
 When it comes to video compression, FFmpeg can be challenging to use over command line, specially in batch processing. This toolbox allows you to run pre-defined ffmpeg commands with a few mouse clicks in Tk interfaces and interactive keyboard inputs right from the terminal.
 
