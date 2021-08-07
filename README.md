@@ -11,6 +11,8 @@ When it comes to video compression, FFmpeg can be challenging to use over comman
 ## How to use it
 The Toolbox is built as an interactive terminal prompt to guide you step by step through the process of concatenating, compressing, spliting and playing videos. You can either use the `VideoPyToolbox.py` script in your IDE, or run it from the terminal. The dist directory contains a pre-compiled executable `VideoPyToolbox.exe` for Windows. 
 
+<img src="./screen.png" alt="logo" align="right" width="1000"/>
+
 ## Features
 Video compression is set to `h.264` and `h.265`, but could be expanded in future releases. The trim/split function to extract video snippets between timestamps needs to transcode the video (h.265 cfr 0) to achieve "frame-accurate" splits. This may take a while. Lossless splits are not accurate if the exact timestamp does not contain a keyframe, which result in timeshifts of up to several seconds (depending on framerate).      
 
