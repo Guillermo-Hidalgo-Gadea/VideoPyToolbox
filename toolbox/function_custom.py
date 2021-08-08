@@ -27,6 +27,8 @@ def the_usual():
         if next == 'y':
             # select videos to append
             concatlist= filedialog.askopenfilenames(title='Choose Video Files you want to concatenate')
+            if not concatlist:
+                return
 
             # maintain natural order of strings with numbers
             filenames = list(natsorted(concatlist, alg=ns.IGNORECASE))
@@ -49,6 +51,11 @@ def the_usual():
         if next =='n':
             # ask output directory
             outputdir =filedialog.askdirectory(title='Choose Output Directory for Concatenation')
+            if not outputdir:
+                print('Please select a valid output directory')
+                secondtry = filedialog.askdirectory(title='Choose Output Directory for Concatenation')
+                if not secondtry:
+                    return
 
             # set compression
             # crf from 0 to 51, 18 recommended lossless average

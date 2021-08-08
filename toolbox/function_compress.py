@@ -20,11 +20,21 @@ def compress_h265():
     # select batch to compress multiple
 
     videofile = filedialog.askopenfilenames(title='Choose Video Files you want to compress')
+    if not videofile:
+        return
 
     # crf from 0 to 51, 18 recommended lossless average
     crf = input("Choose constant rate factor between 0-50: ") or 18
 
     outputdir = filedialog.askdirectory(title='Choose Output Directory for Compression')
+    if not outputdir:
+        print('Please select a valid output directory')
+        secondtry = filedialog.askdirectory(title='Choose Output Directory for Concatenation')
+        if not secondtry:
+            return
+        else:
+            outputdir = secondtry
+            
     path = outputdir + '/compressed/'
     
     # set output directory

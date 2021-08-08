@@ -21,7 +21,11 @@ def batch_rename():
     while True:
         if choice == 'y':
             # choose batch of files to rename
-            batch = list(filedialog.askopenfilenames(title='Choose Video Batch to rename'))
+            renamelist = filedialog.askopenfilenames(title='Choose Video Batch to rename')
+            if not renamelist:
+                return
+
+            batch = list(renamelist)
             dir_list = [os.path.dirname(file)for file in batch]
             name_list = [os.path.basename(file).split('.')[0] for file in batch]
             suffix_list = [os.path.basename(file).split('.')[1] for file in batch]

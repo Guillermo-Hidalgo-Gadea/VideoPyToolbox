@@ -13,9 +13,6 @@ Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
 """
 
-# Todo: 
-# 1) debug cancel and function breaks
-
 # import libraries 
 import os                           # paths and terminal commands
 import time                         # sleep to slow terminal outputs
@@ -42,7 +39,7 @@ def reset_terminal(w, h):
         cmd = f"mode {w},{h}"
         os.system(cmd)    
 
-# Terminal colors
+# Terminal print colors
 RESET = "\033[0;0m"
 MATRIX = "\033[0;32m"
 
@@ -90,35 +87,35 @@ if __name__ == '__main__':
             # start compression
             print("\nStart compression with ffmpeg... \n")
             compress_h265()
-            input("\nDone compressing!\n")
+            input("\nCompressing ended!\n")
             # reset while loop
             choice = 'main'
             
         elif choice.startswith("a"):
             print("\nStart appending videos with ffmpeg... \n")
             concat_videos()
-            input("\nDone appending!\n")
+            input("\nAppending ended!\n")
             # reset while loop
             choice = 'main'
             
         elif choice.startswith("s"):
             print("\nStart trimming videos in ffmpeg... \n")
             trim_split()
-            input("\nDone trimming!\n")
+            input("\nTrimming ended!\n")
             # reset while loop
             choice = 'main'
 
         elif choice.startswith("u"):
             print("\nAh, the usual. Comming right up... \n")
             the_usual()
-            input("\nDone with your pipeline!\n")
+            input("\nPipeline ended!\n")
             # reset while loop
             choice = 'main'
 
         elif choice.startswith("r"):
             print("\nStart renaming files... \n")
             batch_rename()
-            input("\nDone renaming!\n")
+            input("\nRenaming ended!\n")
             # reset while loop
             choice = 'main'
             
