@@ -28,7 +28,8 @@ def ffplay():
     if len(videofiles) == 1:
 
         # list video files
-        video1 = videofiles[0]
+        video1 = f"\"{videofiles[0]}\""
+        # Note that Win paths may contain colon as in D:/... add '' to filename 
 
         # add timestamp
         ffplay_timecode = "\"drawtext=fontfile=Arial.ttf: text='%{pts\:hms} Frame\: %{frame_num}': x=(w-tw)/1.1: y=h-(2*lh): fontcolor=black: fontsize=50: box=1: boxcolor=white: boxborderw=5\""
@@ -40,8 +41,8 @@ def ffplay():
     elif len(videofiles) == 2:
 
         # list video files
-        video1 = videofiles[0]
-        video2 = videofiles[1]
+        video1 = f"\"{videofiles[0]}\""
+        video2 = f"\"{videofiles[1]}\""
 
         # 2x1 grid
         ffplay_grid =  f"\"movie={video1},scale={std_scale}:force_original_aspect_ratio=decrease,pad={std_scale}:-1:-1:color=black[v1]; movie={video2},scale={std_scale}:force_original_aspect_ratio=decrease,pad={std_scale}:-1:-1:color=black[v2];[v1][v2]hstack\""
