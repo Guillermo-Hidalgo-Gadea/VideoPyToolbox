@@ -17,7 +17,7 @@ def ffplay():
     '''
     # Choose Video File from Dialog Box
     
-    videofiles = filedialog.askopenfilenames(title='Choose the Video Files you want to play')
+    videofiles = list(filedialog.askopenfilenames(title='Choose the Video Files you want to play'))
     if not videofiles:
         return
     # Note that Win paths may contain colon as in D:/... and need to be escaped with double back slash \\ 
