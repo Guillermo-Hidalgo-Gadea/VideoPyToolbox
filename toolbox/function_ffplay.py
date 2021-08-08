@@ -21,9 +21,9 @@ def ffplay():
     if not videofiles:
         return
     # Note that Win paths may contain colon as in D:/... and need to be escaped with double back slash \\ 
-    for file in videofiles:
+    for i, file in enumerate(videofiles):
         if file.find(':') != -1:
-            file = file[:file.find(':')]+'\\'+file[file.find(':'):]
+            videofiles[i] = file[:file.find(':')]+'\\'+file[file.find(':'):]
         else:
             pass
 
