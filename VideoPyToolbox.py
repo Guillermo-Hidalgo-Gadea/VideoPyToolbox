@@ -80,6 +80,7 @@ if __name__ == '__main__':
         elif choice.startswith("p"):
             print("\nStart playing video in ffplay... \n")
             ffplay()
+            input()
             # reset while loop
             choice = 'main'
             
