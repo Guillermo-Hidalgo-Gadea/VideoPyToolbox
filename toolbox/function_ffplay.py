@@ -23,7 +23,7 @@ def ffplay():
     # Note that Win paths may contain colon as in D:/... and need to be escaped with double back slash \\ 
     for i, file in enumerate(videofiles):
         if file.find(':') != -1:
-            videofiles[i] = file[:file.find(':')]+'\\'+file[file.find(':'):]
+            videofiles[i] = file[:file.find(':')]+"\\\\" +file[file.find(':'):]
         else:
             pass
 
