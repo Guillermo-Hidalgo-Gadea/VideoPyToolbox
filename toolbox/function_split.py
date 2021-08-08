@@ -90,7 +90,7 @@ def trim_split():
 
         # then overwrite the output trimmed at given timestamps
         #ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -c copy {output} > {metadata} 2>&1" #If you want to save both to go to file > result.txt 2>&1  
-        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -vcodec libx264 -crf 0 {output}"
+        ffmpeg_command = f"ffmpeg -y -progress {metadata} -i {original} -ss {start} -to {end} -vcodec libx265 -crf 0 {output}"
         os.system(ffmpeg_command)
 
         """
@@ -105,7 +105,7 @@ def trim_split():
         1) use -ss after input to be more accurate - NOT WORKING
         2) add keyframes at given timestamp - NOT WORKING
         3) use recode instead of copy to re-create frames around cut edges, lossless codec ffv1? - NOT WORKING, WHY?
-        4) try recode with ibx264 -crf 0 as lossless - WORKING!
+        4) try recode with ibx265 -crf 0 as lossless - WORKING!
         5) trim: ffmpeg -i INPUT -vf trim=60:120
         """
 
