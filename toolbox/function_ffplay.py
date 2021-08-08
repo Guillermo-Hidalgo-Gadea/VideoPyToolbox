@@ -20,14 +20,13 @@ def ffplay():
     videofiles = list(filedialog.askopenfilenames(title='Choose the Video Files you want to play'))
     if not videofiles:
         return
-    # Note that Win paths may contain colon as in D:/... and need to be escaped with double back slash \\ 
+
+    # Note that Win paths may contain colon as in D:/... and need to be escaped with double back slash '\\' in movie= filter
     for i, file in enumerate(videofiles):
         if file.find(':') != -1:
             videofiles[i] = file[:file.find(':')]+"\\\\" +file[file.find(':'):]
         else:
             pass
-
-    #videofiles = [path[:path.find(':')]+'\\'+path[path.find(':'):] for path in videofiles if path.find(':')>-1]
 
     # common standard scaling
     std_scale = '1920:1080'
@@ -38,10 +37,12 @@ def ffplay():
         # list video files
         video1 = videofiles[0]
 
-
+        # 1x1 grid
+        ffplay_grid =  f"\"movie={video1},scale={std_scale}:force_original_aspect_ratio=decrease,pad={std_scale}:-1:-1:color=black\""
+        
         # add timestamp
         ffplay_timecode = "\"drawtext=fontfile=Arial.ttf: text='%{pts\:hms} Frame\: %{frame_num}': x=(w-tw)/1.1: y=h-(2*lh): fontcolor=black: fontsize=50: box=1: boxcolor=white: boxborderw=5\""
-        ffplay_command = f"ffplay -x 1200 -vf {ffplay_timecode} {video1}"
+        ffplay_command = f"ffplay -x 1200 -f lavfi -i {ffplay_grid} -vf {ffplay_timecode}"
         
         # play video
         os.system(ffplay_command)
