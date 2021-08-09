@@ -21,4 +21,5 @@ The video player allows to stream up to 9 files at the same time, e.g. to check 
 * choice between losless and re-encoded trim/split
 * choose from wider variety of compression codecs
 * add GPU accelerated encoding
+* replace -crf with -qp
 * tbd
