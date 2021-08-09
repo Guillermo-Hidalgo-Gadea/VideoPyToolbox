@@ -11,14 +11,13 @@ When it comes to video compression, FFmpeg can be challenging to use over comman
 <img src="screen.PNG" alt="logo" width="900"/>
 
 ## How to use it
-The Toolbox is built as an interactive terminal prompt to guide you step by step through the process of concatenating, compressing, spliting and playing videos. You can either use the `VideoPyToolbox.py` script in your IDE, or run it from the terminal. The dist directory contains a pre-compiled executable `VideoPyToolbox.exe` for Windows. 
+The Toolbox is built as an interactive terminal prompt to guide you step by step through the process of concatenating, compressing, spliting and playing videos. You can either use the `VideoPyToolbox.py` script in your IDE, or run it from the terminal. 
 
 ## Features
-Video compression is set to `h.264` and `h.265`, but could be expanded in future releases. The trim/split function to extract video snippets between timestamps needs to transcode the video (h.265 cfr 0) to achieve "frame-accurate" splits. This may take a while. Lossless splits are not accurate if the exact timestamp does not contain a keyframe, which result in timeshifts of up to several seconds (depending on framerate).      
+The video player allows to stream up to 9 files at the same time, e.g. to check for synchronizity. Video compression is set to `h.264` and `h.265`, but could be expanded in future releases. The trim/split function to extract video snippets between timestamps needs to transcode the video with `h.265 cfr 0` to achieve "frame-accurate" splits. This may take a while. Lossless splits are not accurate if the exact timestamp does not contain a keyframe, which result in timeshifts of up to several seconds (depending on framerate).      
 
 ## Next release
-* enhanced batch processing for trim/split
+* enhanced batch processing for trim/split (e.g. multiple directories)
 * choice between losless and re-encoded trim/split
-* side-by-vide video player to check synchronizity
-* choose compression codecs
+* choose from wider variety of compression codecs
 * tbd
