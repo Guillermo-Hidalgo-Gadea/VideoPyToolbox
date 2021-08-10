@@ -43,9 +43,14 @@ def reset_terminal(w, h):
 def check_gpu():
     gpu_detect = GPUtil.getAvailable()
     if gpu_detect:
-        print("GPU detected!")
-        GPUtil.showUtilization(all=True)
-        gpu_use = input("Would you like to use GPU accelerated encoding? [y/N]")
+        show = [[{'attr':'id','name':'ID'},{'attr':'name','name':'Name'}],
+                [{'attr':'temperature','name':'GPU temp.','suffix':'C','transform': lambda x: x,'precision':0},
+                {'attr':'load','name':'GPU util.','suffix':'%','transform': lambda x: x*100,'precision':0},
+                {'attr':'memoryUtil','name':'Memory util.','suffix':'%','transform': lambda x: x*100,'precision':0}]]
+        print("\n")
+        GPUtil.showUtilization(all=False, attrList=show, useOldCode=False)
+
+        gpu_use = input("\nGPU detected! Use GPU accelerated encoding? [y/N]")
     else:
         gpu_use = 'n'
     return gpu_use
@@ -85,7 +90,7 @@ if __name__ == '__main__':
         's'     Split or Trim files by timestamp 
         'r'     Rename files in batches
         'u'     Custom pipeline to compress and concatenate
-        'gpu'   Check GPU for hardware acceleration
+        'gpu'   Check for hardware acceleration
         'q'     Quit
             '''
 
@@ -116,7 +121,7 @@ if __name__ == '__main__':
         's'     Split or Trim files by timestamp 
         'r'     Rename files in batches
         'u'     Custom pipeline to compress and concatenate
-        'gpu'   Check GPU for hardware acceleration
+        'gpu'   Check for hardware acceleration
         'q'     Quit
             '''
             print(help)
