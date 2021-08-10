@@ -65,6 +65,7 @@ RED = "\033[0;31m"
 # Entry point
 if __name__ == '__main__':
     choice = 'main'
+    gpu_use = 'n'
     while True:
     
         if choice.startswith("main"):
