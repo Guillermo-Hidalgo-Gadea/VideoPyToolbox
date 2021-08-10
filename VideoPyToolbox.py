@@ -8,7 +8,7 @@ timestamps. Use the custom pipeline to compress and concat at once.
 'conda install ffmpeg' if not already installed
 
 MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com
-
+ 
 Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
 """
