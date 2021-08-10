@@ -38,7 +38,7 @@ def compress_h265():
     except:
         pass
 
-    outputs = [path + 'h265_' + os.path.basename(filename) + '.mp4' for filename in videofile]
+    outputs = [path + 'h265_' + os.path.basename(filename) for filename in videofile]
 
     # compress videos with libx265 encoder 
     
@@ -61,7 +61,7 @@ def compress_h265():
     filelist = pd.DataFrame({'input': videofile, 'output': outputs}, index=None)
     filelist.to_csv(metadata, sep ='\t', index=False)
     # add header
-    title = f"# VideoPyToolbox compression with libx265 crf={crf}, started: {starttime} ended: {endtime}"
+    title = f"# VideoPyToolbox compression with libx265 crf={crf} \n # started: {starttime} ended: {endtime} \n"
     with open(metadata, "r+") as textfile:
         original = textfile.read()
         textfile.seek(0)
@@ -94,7 +94,7 @@ def compress_hevc_nvenc():
     except:
         pass
 
-    outputs = [path + 'hevc_nvenc_' + os.path.basename(filename) + '.mp4' for filename in videofile]
+    outputs = [path + 'hevc_nvenc_' + os.path.basename(filename) for filename in videofile]
 
     # compress videos with hevc_nvenc encoder 
     print("HEVC_NVENC compression...")
@@ -115,7 +115,7 @@ def compress_hevc_nvenc():
     filelist = pd.DataFrame({'input': videofile, 'output': outputs}, index=None)
     filelist.to_csv(metadata, sep ='\t', index=False)
     # add header
-    title = f"# VideoPyToolbox compression with hevc_nvenc preset=p7, rc=vbr, cq={cq}, started: {starttime} ended: {endtime}"
+    title = f"# VideoPyToolbox compression with hevc_nvenc preset=p7, rc=vbr, cq={cq} \n # started: {starttime} ended: {endtime}"
     with open(metadata, "r+") as textfile:
         original = textfile.read()
         textfile.seek(0)

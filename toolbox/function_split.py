@@ -89,7 +89,7 @@ def trim_split_h265():
         
         endtime = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
         # add instructions
-        header = f"# started: {starttime} ended: {endtime}, re-encoded libx265 crf=0"
+        header = f"# started: {starttime} ended: {endtime}, re-encoded libx265 crf=0\n"
         with open(filename, "r+") as textfile:
             original = textfile.read()
             textfile.seek(0)
@@ -164,7 +164,7 @@ def trim_split_hevc_nvenc():
         
         endtime = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
         # add instructions
-        header = f"# started: {starttime} ended: {endtime}, re-encoded hevc_nvenc preset=p7 rc=vbr cq=0"
+        header = f"# started: {starttime} ended: {endtime}, re-encoded hevc_nvenc preset=p7 rc=vbr cq=0\n"
         with open(filename, "r+") as textfile:
             original = textfile.read()
             textfile.seek(0)

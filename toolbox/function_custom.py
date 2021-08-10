@@ -97,7 +97,7 @@ def the_usual_h265():
             np.savetxt(metadata, concats, fmt = "%s")
 
             # add header
-            title = f"# VideoPyToolbox concat_compression with libx265 crf={crf}, started: {starttime} ended: {endtime}"
+            title = f"# VideoPyToolbox concat_compression with libx265 crf={crf} \n # started: {starttime} ended: {endtime}\n "
             with open(metadata, "r+") as textfile:
                 original = textfile.read()
                 textfile.seek(0)
@@ -189,7 +189,7 @@ def the_usual_hevc_nvenc():
             np.savetxt(metadata, concats, fmt = "%s")
 
             # add header
-            title = f"# VideoPyToolbox concat_compression with hevc_nvenc preset=p7, rc=vbr, cq={cq}, started: {starttime} ended: {endtime}"
+            title = f"# VideoPyToolbox concat_compression with hevc_nvenc preset=p7, rc=vbr, cq={cq}\n # started: {starttime} ended: {endtime}\n"
             with open(metadata, "r+") as textfile:
                 original = textfile.read()
                 textfile.seek(0)
