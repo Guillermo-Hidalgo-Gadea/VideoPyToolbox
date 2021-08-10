@@ -140,7 +140,10 @@ if __name__ == '__main__':
             ffplay()
             input("\nVideo ended!\n")
             # reset while loop
-            choice = 'main'
+            if "y" in gpu_use:
+                choice = 'acc_main'
+            else:
+                choice = 'main'
             
         elif choice.startswith("c"):
             # start compression
@@ -161,7 +164,10 @@ if __name__ == '__main__':
             concat_videos()
             input("\nAppending ended!\n")
             # reset while loop
-            choice = 'main'
+            if "y" in gpu_use:
+                choice = 'acc_main'
+            else:
+                choice = 'main'
             
         elif choice.startswith("s"):
             print("\nStart trimming videos in ffmpeg... \n")
@@ -194,7 +200,10 @@ if __name__ == '__main__':
             batch_rename()
             input("\nRenaming ended!\n")
             # reset while loop
-            choice = 'main'
+            if "y" in gpu_use:
+                choice = 'acc_main'
+            else:
+                choice = 'main'
             
         elif choice.startswith("q"):
             break
