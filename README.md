@@ -19,5 +19,6 @@ The video player allows to stream up to 9 files at the same time, for example to
 ## Next release
 * enhanced batch processing for split from multiple directories
 * choice between losless and re-encoded trim/split
-* choose from wider variety of compression codecs
+* choose from wider variety of compression codecs, eg. for windows compatibility
+* play audio from video with waveform and timestamp
 * tbd
