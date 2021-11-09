@@ -1,7 +1,5 @@
-*.spec
 *.exe
 *.DS_store
-*.ico
 build
 dist
 __pycache__
