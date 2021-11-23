@@ -5,8 +5,8 @@ block_cipher = None
 
 
 a = Analysis(['VideoPyToolbox.py'],
-             pathex=['C:\\Users\\hidalggc\\Documents\\GitHub\\VideoPyToolbox'],
-             binaries=[('ffmpeg.exe', '.'), ('ffplay.exe', '.')],
+             pathex=[],
+             binaries=[],
              datas=[],
              hiddenimports=[],
              hookspath=[],
@@ -33,8 +33,12 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True,
+          console=False,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
           entitlements_file=None , icon='logo.ico')
+app = BUNDLE(exe,
+             name='VideoPyToolbox.app',
+             icon='logo.ico',
+             bundle_identifier=None)
