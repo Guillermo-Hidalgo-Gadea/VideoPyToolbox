@@ -10,7 +10,9 @@ When it comes to video compression, FFmpeg can be challenging to use over comman
 <img src="screen.PNG" alt="logo" width="900"/>
 
 ## How to use it
-The Toolbox is built as an interactive terminal prompt to guide you step by step through the process of concatenating, compressing, spliting and playing videos. You can either use the `VideoPyToolbox.py` script in your IDE, or run it from the terminal. You can find a compiled version of VideoPyToolbox [here](https://gitlab.ruhr-uni-bochum.de/ikn/syncflir/-/blob/master/PostProcessing/VideoPyToolbox.exe). Compiled in Windows with pyinstaller v5.1 using `pyinstaller --add-binary ffmpeg.exe;. --add-binary ffplay.exe;. --onefile --icon=logo.ico VideoPyToolbox.py`.
+The Toolbox is built as an interactive terminal prompt to guide you step by step through the process of concatenating, compressing, spliting and playing videos. You can either use the `VideoPyToolbox.py` script in your IDE, or run it from the terminal. You can find a compiled version of VideoPyToolbox [here](https://gitlab.ruhr-uni-bochum.de/ikn/syncflir/-/blob/master/PostProcessing/VideoPyToolbox.exe). Compiled in Windows with `pyinstaller v5.1` using:
+
+`pyinstaller --add-binary ffmpeg.exe;. --add-binary ffplay.exe;. --onefile --icon=logo.ico VideoPyToolbox.py`
 
 ## Features
 The video player allows to stream up to 9 files at the same time, for example to check for synchronizity. Video compression is set to `hevc/h.265`, but could be expanded in future releases. GPU mode uses hardware acceleration for encoding with `hevc_nvenc`. The trim/split function to extract video snippets between timestamps needs to re-encode the video with `h.265 cfr 0` or `hevc_nvenc cq 0` respectively, to achieve "frame-accurate" splits. Lossless splits are not accurate enough if the chosen timestamp does not happen to contain a keyframe, which can result in timeshifts of up to several seconds (depending on framerate).
