@@ -21,3 +21,5 @@ The video player allows to stream up to 9 files at the same time, for example to
 * play audio from video with waveform and timestamp
 * scrap all files in directory and subdirectory
 * tbd
+
+pyinstaller --add-binary C:\Users\hidalggc\Anaconda3\Library\bin\ffmpeg.exe;. --add-binary C:\Users\hidalggc\Anaconda3\Library\bin\ffplay.exe;. --onefile --icon=logo.ico --version-file version.rc VideoPyToolbox.py

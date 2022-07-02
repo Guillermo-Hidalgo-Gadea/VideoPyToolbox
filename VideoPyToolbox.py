@@ -236,5 +236,3 @@ if __name__ == '__main__':
                 choice = 'acc_main'
             else:
                 choice = 'main'
-            
-
