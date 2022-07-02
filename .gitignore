@@ -1,6 +1,10 @@
 *.exe
 *.DS_store
 *.spec
+*.rc
+*.ico
+.gitignore
+.gitattributes
 build
 dist
 __pycache__

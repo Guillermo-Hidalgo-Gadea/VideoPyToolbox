@@ -5,9 +5,7 @@ The functions ffplay(), compress_h265(crf), concat_videos() and trim_and_split()
 to play a video recording, compress it using h265 codec, or to concatenate and trim clips from 
 timestamps. Use the custom pipeline to compress and concat at once. 
 
-'conda install ffmpeg' if not already installed
-
-MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com
+MIT License Copyright (c) 2022 GuillermoHidalgoGadea.com
  
 Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
@@ -22,11 +20,11 @@ import GPUtil                       # check available GPUs
 
 # import functions
 from toolbox.function_ffplay import ffplay
-from toolbox.function_compress import compress_h265, compress_hevc_nvenc
+from toolbox.function_compress import compress_h265, compress_h264, compress_hevc_nvenc
 from toolbox.function_concatenate import concat_videos
-from toolbox.function_custom import the_usual_h265, the_usual_hevc_nvenc
-from toolbox.function_rename import batch_rename
+from toolbox.function_custom import the_usual_h265
 from toolbox.function_split import trim_split_h265, trim_split_hevc_nvenc
+from toolbox.function_mosaic import mosaic_video
 from toolbox.logo import ascii_logo, width, height
 
 # Helper functions
@@ -58,6 +56,7 @@ def check_gpu():
 # Terminal print colors
 RESET = "\033[0;0m"
 MATRIX = "\033[0;32m"
+YELLOW = "\033[0;33m"
 CYAN = "\033[0;36m"
 RED = "\033[0;31m"
 
@@ -73,11 +72,11 @@ if __name__ == '__main__':
 
             # header
             print("#"*width + "\n")
-            print("MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com\n".center(width))
+            print("MIT License Copyright (c) 2022 GuillermoHidalgoGadea.com\n".center(width))
             print("#"*width)
             
             #logo in ascii here
-            sys.stdout.write(MATRIX)
+            sys.stdout.write(YELLOW)
             print(ascii_logo.center(width))
             sys.stdout.write(RESET)
             instructions = "VideoPy is a FFMPEG wrapper to play videos, to compress and change codecs, as well as to append and split raw videos."
@@ -86,11 +85,11 @@ if __name__ == '__main__':
             # function help format
             help = '''
         'p'     Play audio or video file
-        'c'     Compress video to h.265/h.264
+        'c'     Compress video with h265/h264
         'a'     Append or Concatenate multiple files
         's'     Split or Trim files by timestamp 
-        'r'     Rename files in batches
         'u'     Custom pipeline to compress and concatenate
+        'm'     Create multi-view mosaic video
         'gpu'   Check for hardware acceleration
         'q'     Quit
             '''
@@ -104,7 +103,7 @@ if __name__ == '__main__':
 
             # header
             print("#"*width + "\n")
-            print("MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com\n".center(width))
+            print("MIT License Copyright (c) 2022 GuillermoHidalgoGadea.com\n".center(width))
             print("#"*width)
             
             #logo in ascii here
@@ -117,11 +116,11 @@ if __name__ == '__main__':
             # function help format
             help = '''
         'p'     Play audio or video file
-        'c'     Compress video to h.265/h.264
+        'c'     Compress video with h265/h264
         'a'     Append or Concatenate multiple files
         's'     Split or Trim files by timestamp 
-        'r'     Rename files in batches
         'u'     Custom pipeline to compress and concatenate
+        'm'     Create multi-view mosaic video
         'gpu'   Check for hardware acceleration
         'q'     Quit
             '''
@@ -150,10 +149,17 @@ if __name__ == '__main__':
             # start compression
             print("\nStart compression with ffmpeg... \n")
             if "y" not in gpu_use:
-                compress_h265()
-                input("\nCompressing ended!\n")
-                # reset while loop
-                choice = 'main'
+                encoder = input("\n(CPU mode) Choose video encoder [h264/h265]: ")
+                if "4" in encoder:
+                    compress_h264()
+                    input("\nCompressing ended!\n")
+                    # reset while loop
+                    choice = 'main'
+                elif "5" in encoder:
+                    compress_h265()
+                    input("\nCompressing ended!\n")
+                    # reset while loop
+                    choice = 'main'
             else:
                 compress_hevc_nvenc()
                 input("\nCompressing ended!\n")
@@ -173,15 +179,25 @@ if __name__ == '__main__':
         elif choice.startswith("s"):
             print("\nStart trimming videos in ffmpeg... \n")
             if "y" not in gpu_use:
-                trim_split_h265()
-                input("\nTrimming ended!\n")
-                # reset while loop
-                choice = 'main'
+                try:
+                    trim_split_h265()
+                    input("\nTrimming ended!\n")
+                    # reset while loop
+                    choice = 'main'
+                except:
+                    input("\nTrimming ended!\n")
+                    # reset while loop
+                    choice = 'main'
             else:
-                trim_split_hevc_nvenc()
-                input("\nTrimming ended!\n")
-                # reset while loop
-                choice = 'acc_main'
+                try:
+                    trim_split_hevc_nvenc()
+                    input("\nTrimming ended!\n")
+                    # reset while loop
+                    choice = 'acc_main'
+                except:
+                    input("\nTrimming ended!\n")
+                    # reset while loop
+                    choice = 'acc_main'
 
         elif choice.startswith("u"):
             print("\nAh, the usual. Comming right up... \n")
@@ -191,20 +207,23 @@ if __name__ == '__main__':
                 # reset while loop
                 choice = 'main'
             else:
-                the_usual_hevc_nvenc()
+                the_usual_h265()
                 input("\nPipeline ended!\n")
                 # reset while loop
                 choice = 'acc_main'
 
-        elif choice.startswith("r"):
-            print("\nStart renaming files... \n")
-            batch_rename()
-            input("\nRenaming ended!\n")
-            # reset while loop
-            if "y" in gpu_use:
-                choice = 'acc_main'
-            else:
+        elif choice.startswith("m"):
+            print("\nStart creating mosaic video... \n")
+            if "y" not in gpu_use:
+                mosaic_video()
+                input("\nMosaic video created!\n")
+                # reset while loop
                 choice = 'main'
+            else:
+                mosaic_video()
+                input("\nMosaic video created!\n")
+                # reset while loop
+                choice = 'acc_main'
             
         elif choice.startswith("q"):
             break

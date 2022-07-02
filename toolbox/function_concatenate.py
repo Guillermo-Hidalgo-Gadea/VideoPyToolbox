@@ -2,7 +2,7 @@
 ====================================================================================================
 Helper function for the VideoPyToolbox
 
-MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com
+MIT License Copyright (c) 2022 GuillermoHidalgoGadea.com
 
 Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
@@ -63,12 +63,7 @@ def concat_videos():
 
                 # set output directory
                 #output = os.path.join(videopath , "concatenated", outputfile)
-                output = os.path.join(outputdir , "concatenated", outputfile)
-
-                try:
-                    os.mkdir(os.path.dirname(output))
-                except:
-                    pass
+                output = os.path.join(outputdir, outputfile)
 
                 # write mylist.txt for ffmpeg
                 path, _ = os.path.split(filenames[0])

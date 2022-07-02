@@ -2,7 +2,7 @@
 ====================================================================================================
 Helper function for the VideoPyToolbox
 
-MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com
+MIT License Copyright (c) 2022 GuillermoHidalgoGadea.com
 
 Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
@@ -16,7 +16,6 @@ def ffplay():
     Video player with ffplay and mosaic display
     '''
     # Choose Video File from Dialog Box
-    
     videofiles = list(filedialog.askopenfilenames(title='Choose the Video Files you want to play'))
     if not videofiles:
         return

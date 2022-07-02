@@ -2,7 +2,7 @@
 ====================================================================================================
 Helper function for the VideoPyToolbox
 
-MIT License Copyright (c) 2021 GuillermoHidalgoGadea.com
+MIT License Copyright (c) 2022 GuillermoHidalgoGadea.com
 
 Sourcecode: https://github.com/Guillermo-Hidalgo-Gadea/VideoPyToolbox
 ====================================================================================================
@@ -32,7 +32,7 @@ def trim_split_h265():
     splitlist = [os.path.basename(filename) for filename in splitlist]
 
     # placeholders
-    output = ['trim_' + filename for filename in splitlist]
+    output = ['trim_' + filename.split('.')[0] + '.mp4' for filename in splitlist]
     start = ['00:00:00.000'] * len(splitlist)
     end = ['00:00:00.000'] * len(splitlist)
     
@@ -71,8 +71,9 @@ def trim_split_h265():
         open_file(filename)
         second_check = input('Is the format correct? [y/n] ')
         if "n" in second_check:
-            return
+            splitlist = []
     else:
+        crf = input("Choose constant rate factor between 0-50: ") or 0
         starttime = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
         # loop over cases in file
         for case in range(len(splitlist)):
@@ -84,12 +85,12 @@ def trim_split_h265():
             end = row[3]
 
             # split with re-encoding
-            ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -vcodec libx265 -crf 0 {output}"
+            ffmpeg_command = f"ffmpeg -y -i {original} -ss {start} -to {end} -vcodec libx265 -crf {crf} {output}"
             os.system(ffmpeg_command)
         
         endtime = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
         # add instructions
-        header = f"# started: {starttime} ended: {endtime}, re-encoded libx265 crf=0\n"
+        header = f"# started: {starttime} ended: {endtime}, re-encoded libx265 crf={crf}\n"
         with open(filename, "r+") as textfile:
             original = textfile.read()
             textfile.seek(0)
@@ -146,7 +147,7 @@ def trim_split_hevc_nvenc():
         open_file(filename)
         second_check = input('Is the format correct? [y/n] ')
         if "n" in second_check:
-            return
+            splitlist = []
     else:
         starttime = datetime.now().strftime("%Y_%m_%d-%I-%M-%S")
         # loop over cases in file
