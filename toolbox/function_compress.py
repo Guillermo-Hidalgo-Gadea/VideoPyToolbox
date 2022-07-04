@@ -36,7 +36,7 @@ def compress_h265():
 
     # set output filenames
     path = outputdir
-    outputs = [path + 'h265_crf{crf}_' + os.path.basename(filename) for filename in videofile]
+    outputs = [os.path.join(path, f'h265_crf{crf}_' + os.path.basename(filename)) for filename in videofile]
 
     for i, video in enumerate(videofile):
         output = outputs[i].split('.')[0] # strip video container
@@ -69,7 +69,7 @@ def compress_h264():
 
     # set output filenames
     path = outputdir
-    outputs = [path + 'h264_crf{crf}_' + os.path.basename(filename) for filename in videofile]
+    outputs = [os.path.join(path, f'h264_crf{crf}_' + os.path.basename(filename)) for filename in videofile]
 
     for i, video in enumerate(videofile):
         output = outputs[i].split('.')[0] # strip video container
@@ -101,7 +101,7 @@ def compress_hevc_nvenc():
 
     # set output directory
     path = outputdir
-    outputs = [path + 'hevc_nvenc_cq{cq}_' + os.path.basename(filename) for filename in videofile]
+    outputs = [os.path.join(path, f'hevc_nvenc_cq{cq}_' + os.path.basename(filename)) for filename in videofile]
 
     for i, video in enumerate(videofile):
         output = outputs[i].split('.')[0] # strip video container
