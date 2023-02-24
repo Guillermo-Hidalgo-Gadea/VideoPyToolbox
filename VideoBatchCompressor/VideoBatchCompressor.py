@@ -61,6 +61,18 @@ def readConfig(configpath):
     
     return sourcedir, outputdir, projectname, extension, crf, cam_assignement
 
+def existing_files(outputfile, outputdir):
+    '''
+    Check if the output file already exists, 
+    rise a flag and skip the compression job.
+    '''
+    existing = [os.path.join(outputdir, file) for file in os.listdir(outputdir)]
+    flag = False
+    if outputfile in existing:
+        flag = True
+    
+    return flag
+
 def VideoCompression(configpath):
     # read config parameters
     sourcedir, outputdir, projectname, ext, crf, cam_assignement = readConfig(configpath)
@@ -131,25 +143,31 @@ def VideoCompression(configpath):
     for outputfile in numpy.unique(concats[:,1]):
         filenames = concats[concats[:,1]==outputfile][:,0]
 
-        print('#####')
-        print(f'Compressing Video {outputfile} from following files:')
-        print(filenames)
-
         # set output directory
         output = os.path.join(outputdir, outputfile)
 
-        # write mylist.txt for ffmpeg
-        ffmpegfile = sourcedir + "/ffmpeg_concat_list.txt"
-        with open(ffmpegfile, "w+") as textfile:
-            for element in filenames:
-                _, name = os.path.split(element)
-                textfile.write("file " +"'"+ element + "'\n")
-            textfile.close()
+        # check if file already exists in outputdir
+        flag = existing_files(outputfile, outputdir)
         
-        # create ffmpeg command
-        ffmpeg_command = f'ffmpeg -y -f concat -safe 0 -i {ffmpegfile} -an -dn -vcodec libx265 -crf {crf} {output}'
-        os.system(ffmpeg_command)
-        os.remove(ffmpegfile)
+        if flag:
+            print(f'File {outputfile} already exists, skipping!')
+            pass
+        else:
+            print(f'Compressing Video {outputfile} from following files:')
+            print(filenames)
+
+            # write mylist.txt for ffmpeg
+            ffmpegfile = sourcedir + "/ffmpeg_concat_list.txt"
+            with open(ffmpegfile, "w+") as textfile:
+                for element in filenames:
+                    _, name = os.path.split(element)
+                    textfile.write("file " +"'"+ element + "'\n")
+                textfile.close()
+            
+            # create ffmpeg command
+            ffmpeg_command = f'ffmpeg -y -f concat -safe 0 -i {ffmpegfile} -an -dn -vcodec libx265 -crf {crf} {output}'
+            os.system(ffmpeg_command)
+            os.remove(ffmpegfile)
 
     return
 
