@@ -172,5 +172,6 @@ def VideoCompression(configpath):
     return
 
 ## ENTRY POINT ##
-
-VideoCompression(getConfigpath())
+if __name__ == '__main__':
+    
+    VideoCompression(getConfigpath())
